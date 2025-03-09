@@ -10,15 +10,19 @@ part 'donors_state.dart';
 class DonorsCubit extends Cubit<DonorsState> {
   DonorsCubit() : super(DonorsState());
   late DonorsDataSource donorsDataSource;
-  getDonors() async {
-    emit(state.copyWith(getDonorState: RequestState.loading));
+  void getDonors() {
     final supabase = Supabase.instance.client;
-    final response = await supabase
+    emit(state.copyWith(getDonorState: RequestState.loading));
+    supabase
         .from('UserAuth')
-        .select()
-        .order('created_at', ascending: false);
-    donorsDataSource = DonorsDataSource(state.donorData);
-    emit(state.copyWith(
-        getDonorState: RequestState.success, donorData: response));
+        .stream(primaryKey: ['id'])
+        .order('created_at', ascending: false)
+        .listen((data) {
+          donorsDataSource = DonorsDataSource(data);
+          emit(state.copyWith(
+            getDonorState: RequestState.success,
+            donorData: data,
+          ));
+        });
   }
 }
