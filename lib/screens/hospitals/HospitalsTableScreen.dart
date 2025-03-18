@@ -107,38 +107,33 @@ class HospitalsDataSource extends DataGridSource {
                   value: 'view_appointments',
                   child: Text('View Appointments'),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
+                    showModalBottomSheet(
+                        context: context,
                         builder: (context) =>
-                            HospitalAppointmentsPage(hospital: hospital),
-                      ),
-                    );
+                            HospitalAppointmentsPage(hospital: hospital));
                   },
                 ),
                 PopupMenuItem<String>(
                   value: 'view_emergency_donations',
                   child: Text('View Emergency Donations'),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EmergencyDonationsPage(hospital: hospital),
-                      ),
-                    );
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) => Center(
+                            child: EmergencyDonationsPage(hospital: hospital)));
                   },
                 ),
                 PopupMenuItem<String>(
                   value: 'view_medicines',
                   child: Text('View Medicines'),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MedicinesPage(hospital: hospital),
-                      ),
-                    );
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) =>
+                            Center(child: MedicinesPage(hospital: hospital)));
+
+                    //   ),
+                    // );
                   },
                 ),
               ],
@@ -307,8 +302,6 @@ class EmergencyDonationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text("Emergency Donations for ${hospital['name']}")),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _fetchEmergencyDonations(),
         builder: (context, snapshot) {
@@ -321,6 +314,7 @@ class EmergencyDonationsPage extends StatelessWidget {
           }
 
           final emergencyDonations = snapshot.data!;
+          print(emergencyDonations);
           return SfDataGrid(
             source: EmergencyDonationDataSource(emergencyDonations),
             columnWidthMode: ColumnWidthMode.fill,
@@ -363,8 +357,8 @@ class EmergencyDonationDataSource extends DataGridSource {
       .map<DataGridRow>((donation) => DataGridRow(cells: [
             DataGridCell<String>(
                 columnName: 'user_full_name',
-                value: donation['user_full_name'] ??
-                    'N/A'), // Fetch user_full_name correctly
+                value: donation['UserAuth']['user_full_name'] ??
+                    'Ndd/A'), // Fetch user_full_name correctly
             DataGridCell<String>(
                 columnName: 'point', value: donation['point'].toString()),
             DataGridCell<String>(
